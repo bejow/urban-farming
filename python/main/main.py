@@ -48,5 +48,7 @@ def update_temperature(interval):
         print("Update Temperature:\n{}\n\n".format(temperature_data))
         time.sleep(interval)
 
+
+
 main()
 
