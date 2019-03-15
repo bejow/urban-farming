@@ -2,6 +2,9 @@ import threading
 import time
 import sensors
 import requests
+import controller
+
+
 
 def main():
     #create separate Threads for the diffrent jobs
@@ -9,10 +12,14 @@ def main():
     oxygen_thread = threading.Thread(target=update_oxygen, args=[30])
     temperature_thread = threading.Thread(target=update_temperature, args=[15])
 
+    WATER_RELAIS_PIN = 11
+    LIGHT_RELAIS_PIN = 13	
     #starting threads
-    ph_thread.start()
-    oxygen_thread.start()
-    temperature_thread.start()
+    #ph_thread.start()
+    #oxygen_thread.start()
+    #temperature_thread.start()
+    contoller.turn_on(WATER_RELAIS_PIN)
+    controller.turn_of(LIGHT_RELAIS_PIN)
 
 def update_ph(interval):
     #periodically gets the sensor value of PH and sends it to the server
