@@ -85,10 +85,8 @@ try:
     temperature_thread = threading.Thread(target=update_temperature, args=[15])
     water_thread = threading.Thread(target=controller.loop, args=[WATER_RELAIS_PIN, 2, 1])
     light_thread = threading.Thread(target=controller.loop, args=[LIGHT_RELAIS_PIN, 2, 1])
-
-    myThreads = [ph_thread, oxygen_thread, temperature_thread, water_thread, light_thread]
-
-    get_settings(3)
+    settings_thread = threading.Thread(target=get_settings, args=[30])
+    myThreads = [ph_thread, oxygen_thread, temperature_thread, water_thread, light_thread, settings_thread]
 
     startThreads(myThreads)
     input("press key to exit")
