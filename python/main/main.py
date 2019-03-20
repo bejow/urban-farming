@@ -15,18 +15,20 @@ def startThreads(threads):
 
 def stopThreads(threads):
     for thread in threads:
-        thread.stop()
+        thread.do_run = False
 
 def get_settings(interval):
     global current_settings
-    #while True:
-    req = requests.get(settings.api_url + settings.settings_endpoint)
-    current_settings = json.loads(req.text)
-    current
+    t = threading.currentThread()
+    while getattr(t, "do_run", True):
+        req = requests.get(settings.api_url + settings.settings_endpoint)
+        current_settings = json.loads(req.text)[0]
+    print("stop fetching settings..")
 
 def update_ph(interval):
     #periodically gets the sensor value of PH and sends it to the server
-    while True:
+    t = threading.currentThread()
+    while getattr(t, "do_run", True):
         ph_data = {
             'time': str(time.time()),
             'value': str(sensors.read_ph_sensor())
@@ -34,10 +36,12 @@ def update_ph(interval):
         postReq = requests.post(settings.api_url + settings.ph_endpoint, data=ph_data)
         print("Update PH:\n{}\n\n".format(ph_data))
         time.sleep(interval)
+    print("stop updating ph..")
 
 def update_oxygen(interval):
     #periodically gets the sensor value of oxygen and sends it to the server                     
-    while True:
+    t = threading.currentThread()
+    while getattr(t, "do_run", True):
         oxygen_data = {
             'time': str(time.time()),
             'value': str(sensors.read_oxygen_sensor())
@@ -45,11 +49,13 @@ def update_oxygen(interval):
         postReq = requests.post(settings.api_url + settings.oxygen_endpoint, data=oxygen_data)
         print("Update Oxygen:\n{}\n\n".format(oxygen_data))
         time.sleep(interval)
+    print("stop updating oxygen..")    
         
 
 def update_temperature(interval):
     #periodically gets the sensor value of temperature and send it to the server                     
-    while True:
+    t = threading.currentThread()
+    while getattr(t, "do_run", True):
         temperature_data = {
             'time': str(time.time()),
             'value': str(sensors.read_temperature_sensor())
@@ -57,6 +63,7 @@ def update_temperature(interval):
         postReq = requests.post(settings.api_url + settings.temperature_endpoint, data=temperature_data)
         print("Update Temperature:\n{}\n\n".format(temperature_data))
         time.sleep(interval)
+    print("stop updating temperature..")
 
 try:
     #GPIO Setup
