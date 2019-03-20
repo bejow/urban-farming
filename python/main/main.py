@@ -72,10 +72,11 @@ try:
     
     main()
     input("press key to exit")
-except KeyboardInterrupt:
+except (KeyboardInterrupt, SystemExit):
+    cleanup_stop_thread()
     GPIO.cleanup()
     print("Handling Keyboard Interrupt")
 finally:
     print("finally")
-    GPIO.cleanup()
+    sys.exit()
 
