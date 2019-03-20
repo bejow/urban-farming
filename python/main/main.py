@@ -23,7 +23,9 @@ def get_settings(interval):
     t = threading.currentThread()
     while getattr(t, "do_run", True):
         req = requests.get(settings.api_url + settings.settings_endpoint)
-        current_settings = json.loads(req.text)[0]
+        current_settings = json.loads(req.text)
+        print("current settings:", current_settings)
+        time.sleep(interval)
     print("stop fetching settings..")
 
 def update_ph(interval):
