@@ -9,37 +9,20 @@ import controller
 import sensors
 import settings
 
-GPIO.setmode(GPIO.BOARD)
-WATER_RELAIS_PIN = 13
-LIGHT_RELAIS_PIN = 11
-GPIO.setup(WATER_RELAIS_PIN, GPIO.OUT)
-GPIO.setup(LIGHT_RELAIS_PIN, GPIO.OUT)
+def startThreads(threads):
+    for thread in threads:
+        thread.start()
 
-global settings
-settings = settings.default_settings
-
-def main():
-    #create separate Threads for the diffrent jobs
-    ph_thread = threading.Thread(target=update_ph, args=[20])
-    oxygen_thread = threading.Thread(target=update_oxygen, args=[30])
-    temperature_thread = threading.Thread(target=update_temperature, args=[15])
-    water_thread = threading.Thread(target=controller.loop, args=[WATER_RELAIS_PIN, 2, 1])
-    light_thread = threading.Thread(target=controller.loop, args=[LIGHT_RELAIS_PIN, 2, 1])
-
-    get_settings(3)
-    #starting threads
-    #ph_thread.start()
-    #oxygen_thread.start()
-    #temperature_thread.start()
-    #water_thread.start()
-    #light_thread.start()
+def stopThreads(threads):
+    for thread in threads:
+        thread.stop()
 
 def get_settings(interval):
-    global settings
+    global current_settings
     #while True:
     req = requests.get(settings.api_url + settings.settings_endpoint)
-    settings = json.loads(req.text)
-    print(settings)
+    current_settings = json.loads(req.text)
+    current
 
 def update_ph(interval):
     #periodically gets the sensor value of PH and sends it to the server
@@ -75,16 +58,37 @@ def update_temperature(interval):
         print("Update Temperature:\n{}\n\n".format(temperature_data))
         time.sleep(interval)
 
-
 try:
-    main()
+    #GPIO Setup
+    GPIO.setmode(GPIO.BOARD)
+    WATER_RELAIS_PIN = 13
+    LIGHT_RELAIS_PIN = 11
+    GPIO.setup(WATER_RELAIS_PIN, GPIO.OUT)
+    GPIO.setup(LIGHT_RELAIS_PIN, GPIO.OUT)
+
+    #load settings
+    current_settings = settings.default_settings
+
+    #create separate Threads for the diffrent jobs
+    ph_thread = threading.Thread(target=update_ph, args=[20])
+    oxygen_thread = threading.Thread(target=update_oxygen, args=[30])
+    temperature_thread = threading.Thread(target=update_temperature, args=[15])
+    water_thread = threading.Thread(target=controller.loop, args=[WATER_RELAIS_PIN, 2, 1])
+    light_thread = threading.Thread(target=controller.loop, args=[LIGHT_RELAIS_PIN, 2, 1])
+
+    myThreads = [ph_thread, oxygen_thread, temperature_thread, water_thread, light_thread]
+
+    get_settings(3)
+
+    startThreads(myThreads)
     input("press key to exit")
 except KeyboardInterrupt:
     print("Handling Keyboard Interrupt")
 except SystemExit:
     print("Handling System Exit")
 finally:
-    print("finally")
+    print("error or end of programm")
     GPIO.cleanup()
+    stopThreads(myThreads)
     sys.exit()
 

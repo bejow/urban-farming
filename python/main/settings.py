@@ -7,7 +7,7 @@ default_settings = {
 }
 
 #api settings
-api_url = "http://localhost:3000/"
+api_url = "http://192.168.1.21:3000/"
 settings_endpoint = "settings"
 ph_endpoint = "ph"
 oxygen_endpoint = "oxygen"
