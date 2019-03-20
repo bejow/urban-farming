@@ -93,6 +93,8 @@ except KeyboardInterrupt:
     print("Handling Keyboard Interrupt")
 except SystemExit:
     print("Handling System Exit")
+except Exception as e:
+    print(e)
 finally:
     print("error or end of programm")
     GPIO.cleanup()
