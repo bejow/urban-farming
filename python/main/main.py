@@ -4,6 +4,7 @@ import requests
 import RPi.GPIO as GPIO
 import sys
 import json
+import traceback
 
 import controller
 import sensors
@@ -93,8 +94,8 @@ except KeyboardInterrupt:
     print("Handling Keyboard Interrupt")
 except SystemExit:
     print("Handling System Exit")
-except Exception as e:
-    print(e)
+except Exception:
+    traceback.print_exc()
 finally:
     print("error or end of programm")
     GPIO.cleanup()
