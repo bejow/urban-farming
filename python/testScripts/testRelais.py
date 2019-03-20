@@ -3,7 +3,7 @@ import time
 GPIO.setmode(GPIO.BOARD)
 
 #setting up the pins
-RELAIS_1_PIN = 11
+RELAIS_1_PIN = 13
 
 GPIO.setup(RELAIS_1_PIN, GPIO.OUT)
 
@@ -11,6 +11,6 @@ GPIO.setup(RELAIS_1_PIN, GPIO.OUT)
 
 while True:
 	GPIO.output(RELAIS_1_PIN, GPIO.LOW)
-	time.sleep(1)
+	time.sleep(0.5)
 	GPIO.output(RELAIS_1_PIN, GPIO.HIGH)
-	time.sleep(1)
+	time.sleep(0.5)
