@@ -78,14 +78,14 @@ try:
 
     #load settings
     current_settings = settings.default_settings
-
+    print(current_settings)
     #create separate Threads for the diffrent jobs
     ph_thread = threading.Thread(target=update_ph, args=[20])
     oxygen_thread = threading.Thread(target=update_oxygen, args=[30])
     temperature_thread = threading.Thread(target=update_temperature, args=[15])
-    water_thread = threading.Thread(target=controller.loop, args=[WATER_RELAIS_PIN, current_settings["pumpDuration"], current_settings["pumpFrequency"]])
+    water_thread = threading.Thread(target=controller.loop, args=[WATER_RELAIS_PIN, current_settings["water_time"], current_settings["no_water_time"]])
     light_thread = threading.Thread(target=controller.loop, args=[LIGHT_RELAIS_PIN, 2, 1])
-    settings_thread = threading.Thread(target=get_settings, args=[30])
+    settings_thread = threading.Thread(target=get_settings, args=[5])
     myThreads = [ph_thread, oxygen_thread, temperature_thread, water_thread, light_thread, settings_thread]
 
     startThreads(myThreads)

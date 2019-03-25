@@ -2,8 +2,8 @@
 default_settings = {
     "light_time": 7200,
     "no_light_time" : 7200,
-    "water_time" : 600,
-    "no_water_time": 7200, 
+    "water_time" : 5,
+    "no_water_time": 2, 
 }
 
 #api settings
