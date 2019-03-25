@@ -6,7 +6,6 @@ import sys
 import json
 import traceback
 
-import controller
 import sensors
 import settings
 
@@ -78,16 +77,16 @@ def water_loop(pin):
         time.sleep(float(current_settings["no_water_time"]))
     print("Stopping Water on Pin", pin)
 
-    def light_loop(pin):
-        global current_settings
-        t = threading.currentThread()
-        while getattr(t, "do_run", True):
-            print(current_settings)
-            GPIO.output(pin, GPIO.LOW)
-            time.sleep(float(current_settings["light_time"]))
-            GPIO.output(pin, GPIO.HIGH)
-            time.sleep(float(current_settings["no_light_time"]))
-        print("Stopping Light on pin", pin)
+def light_loop(pin):
+    global current_settings
+    t = threading.currentThread()
+    while getattr(t, "do_run", True):
+        print(current_settings)
+        GPIO.output(pin, GPIO.LOW)
+        time.sleep(float(current_settings["light_time"]))
+        GPIO.output(pin, GPIO.HIGH)
+        time.sleep(float(current_settings["no_light_time"]))
+    print("Stopping Light on pin", pin)
 
 try:
     #GPIO Setup
@@ -103,7 +102,7 @@ try:
     temperature_thread = threading.Thread(target=update_temperature, args=[settings.update_temperature_frequency])
     water_thread = threading.Thread(target=water_loop, args=[settings.water_relais_pin])
     light_thread = threading.Thread(target=light_loop, args=[settings.light_relais_pin])
-    settings_thread = threading.Thread(target=get_settings, args=[settings.fetch_settings_freqency])
+    settings_thread = threading.Thread(target=get_settings, args=[settings.fetch_settings_frequency])
     myThreads = [ph_thread, oxygen_thread, temperature_thread, water_thread, light_thread, settings_thread]
 
     startThreads(myThreads)
