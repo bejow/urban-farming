@@ -24,7 +24,6 @@ def get_settings(interval):
     while getattr(t, "do_run", True):
         req = requests.get(settings.api_url + settings.settings_endpoint)
         current_settings = json.loads(req.text)
-        print("current settings:", current_settings)
         time.sleep(interval)
     print("stop fetching settings..")
 
@@ -67,6 +66,17 @@ def update_temperature(interval):
         print("Update Temperature:\n{}\n\n".format(temperature_data))
         time.sleep(interval)
     print("stop updating temperature..")
+
+def loop(pin, time_on, time_off):
+    global current_settings
+    t = threading.currentThread()
+    while getattr(t, "do_run", True):
+        print(current_settings)
+        GPIO.output(pin, GPIO.LOW)
+        time.sleep(current_settings["water_time"])
+        GPIO.output(pin, GPIO.HIGH)
+        time.sleep(current_settings["no_water_time"])
+    print("stop looping pin", pin)
 
 try:
     #GPIO Setup

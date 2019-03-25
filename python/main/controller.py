@@ -12,16 +12,11 @@ LIGHT_RELAIS_PIN = 13
 
 def loop(pin, time_on, time_off):
     global current_settings
-    print("global settings")
-    print(global_settings)
     t = threading.currentThread()
     while getattr(t, "do_run", True):
 	print("Pin", pin, "\ntime on:", time_on, "\ntime off:", time_off)
         GPIO.output(pin, GPIO.LOW)
-	clock = 0
-        while clock <= time_on:
-		time.sleep(1)
-		clock += 1
+        time.sleep(time_on)
         GPIO.output(pin, GPIO.HIGH)
         time.sleep(time_off)
     print("stop looping pin", pin)
