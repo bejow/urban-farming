@@ -11,9 +11,9 @@ LIGHT_RELAIS_PIN = 13
 #GPIO.setup(LIGHT_RELAIS_PIN, GPIO.OUT)
 
 def loop(pin, time_on, time_off):
+    print("Pin", pin, "\ntime on:", time_on, "\ntime off:", time_off)
     t = threading.currentThread()
     while getattr(t, "do_run", True):
-        print(GPIO.getmode())
         GPIO.output(pin, GPIO.LOW)
         time.sleep(time_on)
         GPIO.output(pin, GPIO.HIGH)
