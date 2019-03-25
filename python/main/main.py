@@ -67,7 +67,7 @@ def update_temperature(interval):
         time.sleep(interval)
     print("stop updating temperature..")
 
-def loop(pin, time_on, time_off):
+def water_loop(pin):
     global current_settings
     t = threading.currentThread()
     while getattr(t, "do_run", True):
@@ -76,26 +76,34 @@ def loop(pin, time_on, time_off):
         time.sleep(float(current_settings["water_time"]))
         GPIO.output(pin, GPIO.HIGH)
         time.sleep(float(current_settings["no_water_time"]))
-    print("stop looping pin", pin)
+    print("Stopping Water on Pin", pin)
+
+    def light_loop(pin):
+        global current_settings
+        t = threading.currentThread()
+        while getattr(t, "do_run", True):
+            print(current_settings)
+            GPIO.output(pin, GPIO.LOW)
+            time.sleep(float(current_settings["light_time"]))
+            GPIO.output(pin, GPIO.HIGH)
+            time.sleep(float(current_settings["no_light_time"]))
+        print("Stopping Light on pin", pin)
 
 try:
     #GPIO Setup
     GPIO.setmode(GPIO.BOARD)
-    WATER_RELAIS_PIN = 13
-    LIGHT_RELAIS_PIN = 11
-    GPIO.setup(WATER_RELAIS_PIN, GPIO.OUT)
-    GPIO.setup(LIGHT_RELAIS_PIN, GPIO.OUT)
-
+    GPIO.setup(settings.water_relais_pin, GPIO.OUT)
+    GPIO.setup(settings.light_relais_pin, GPIO.OUT)
     #load settings
-    current_settings = settings.default_settings
+    current_settings = settings.system_settings
     print(current_settings)
     #create separate Threads for the diffrent jobs
-    ph_thread = threading.Thread(target=update_ph, args=[20])
-    oxygen_thread = threading.Thread(target=update_oxygen, args=[30])
-    temperature_thread = threading.Thread(target=update_temperature, args=[15])
-    water_thread = threading.Thread(target=loop, args=[WATER_RELAIS_PIN, current_settings["water_time"], current_settings["no_water_time"]])
-    light_thread = threading.Thread(target=loop, args=[LIGHT_RELAIS_PIN, 2, 1])
-    settings_thread = threading.Thread(target=get_settings, args=[5])
+    ph_thread = threading.Thread(target=update_ph, args=[settings.update_ph_frequency])
+    oxygen_thread = threading.Thread(target=update_oxygen, args=[settings.update_oxygen_frequency])
+    temperature_thread = threading.Thread(target=update_temperature, args=[settings.update_temperature_frequency])
+    water_thread = threading.Thread(target=water_loop, args=[settings.water_relais_pin])
+    light_thread = threading.Thread(target=light_loop, args=[settings.light_relais_pin])
+    settings_thread = threading.Thread(target=get_settings, args=[settings.fetch_settings_freqency])
     myThreads = [ph_thread, oxygen_thread, temperature_thread, water_thread, light_thread, settings_thread]
 
     startThreads(myThreads)
