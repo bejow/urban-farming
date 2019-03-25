@@ -73,9 +73,9 @@ def loop(pin, time_on, time_off):
     while getattr(t, "do_run", True):
         print(current_settings)
         GPIO.output(pin, GPIO.LOW)
-        time.sleep(current_settings["water_time"])
+        time.sleep(int(current_settings["water_time"]))
         GPIO.output(pin, GPIO.HIGH)
-        time.sleep(current_settings["no_water_time"])
+        time.sleep(int(current_settings["no_water_time"])
     print("stop looping pin", pin)
 
 try:
