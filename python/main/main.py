@@ -5,8 +5,8 @@ import RPi.GPIO as GPIO
 import sys
 import json
 import traceback
+from w1thermsensor import W1ThermSensor
 
-import sensors
 import settings
 
 def startThreads(threads):
@@ -32,7 +32,7 @@ def update_ph(interval):
     while getattr(t, "do_run", True):
         ph_data = {
             'time': str(time.time()),
-            'value': str(sensors.read_ph_sensor())
+            'value': str("fake sensor ph data")
         }
         postReq = requests.post(settings.api_url + settings.ph_endpoint, data=ph_data)
         print("Update PH:\n{}\n\n".format(ph_data))
@@ -45,7 +45,7 @@ def update_oxygen(interval):
     while getattr(t, "do_run", True):
         oxygen_data = {
             'time': str(time.time()),
-            'value': str(sensors.read_oxygen_sensor())
+            'value': str("fake sensor oxygen data")
         }
         postReq = requests.post(settings.api_url + settings.oxygen_endpoint, data=oxygen_data)
         print("Update Oxygen:\n{}\n\n".format(oxygen_data))
@@ -55,16 +55,17 @@ def update_oxygen(interval):
 
 def update_temperature(interval):
     #periodically gets the sensor value of temperature and send it to the server                     
+    sensor = W1ThermSensor()
     t = threading.currentThread()
     while getattr(t, "do_run", True):
         temperature_data = {
             'time': str(time.time()),
-            'value': str(sensors.read_temperature_sensor())
+            'value': str(sensor.get_temperature())
         }
         postReq = requests.post(settings.api_url + settings.temperature_endpoint, data=temperature_data)
         print("Update Temperature:\n{}\n\n".format(temperature_data))
         time.sleep(interval)
-    print("stop updating temperature..")
+    print("stop updating temperature")
 
 def water_loop(pin):
     global current_settings
