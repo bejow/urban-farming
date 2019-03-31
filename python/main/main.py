@@ -118,5 +118,4 @@ finally:
     print("error or end of programm")
     GPIO.cleanup()
     stopThreads(myThreads)
-    sys.exit()
 
