@@ -1,16 +1,10 @@
-import RPi.GPIO as GPIO
+from w1thermsensor import W1ThermSensor
 import time
 
-GPIO.setmode(GPIO.BOARD)
-#setting up the pins
-temp_sensor_pin = 7
-
-GPIO.setup(temp_sensor_pin, GPIO.IN)
-
-#logic
+sensor = W1ThermSensor()
 
 while True:
-	temperature = GPIO.input(temp_sensor_pin)
-    print(temperature)
-	time.sleep(0.5)
+	temperature = sensor.get_temperature()
+    print("The temperature is %s celsius" % temperature)
+	time.sleep(1)
 
