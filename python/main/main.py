@@ -50,7 +50,7 @@ def update_oxygen(interval):
         postReq = requests.post(settings.api_url + settings.oxygen_endpoint, data=oxygen_data)
         print("Update Oxygen:\n{}\n\n".format(oxygen_data))
         time.sleep(interval)
-    print("stop updating oxygen..")    
+    print("stop updating oxygen..")
         
 
 def update_temperature(interval):
@@ -89,6 +89,15 @@ def light_loop(pin):
         time.sleep(float(current_settings["no_light_time"]))
     print("Stopping Light on pin", pin)
 
+def authenticate():
+    auth_data = {
+        "deviceIdentifier": settings.uuid,
+        "deviceSecret": settings.secret
+    }
+    auth_req = requests.post(settings.api_url + settings.auth_endpoint, data=auth_data)
+    token = json.loads(auth_req.text)
+    return token
+
 try:
     #GPIO Setup
     GPIO.setmode(GPIO.BOARD)
@@ -96,7 +105,12 @@ try:
     GPIO.setup(settings.light_relais_pin, GPIO.OUT)
     #load settings
     current_settings = settings.system_settings
-    print(current_settings)
+    
+    #authenticate
+    token = authenticate()
+    print("#token: " + str(token))
+
+
     #create separate Threads for the diffrent jobs
     ph_thread = threading.Thread(target=update_ph, args=[settings.update_ph_frequency])
     oxygen_thread = threading.Thread(target=update_oxygen, args=[settings.update_oxygen_frequency])
@@ -118,4 +132,4 @@ finally:
     print("error or end of programm")
     GPIO.cleanup()
     stopThreads(myThreads)
-
+    

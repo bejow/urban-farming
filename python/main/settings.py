@@ -18,7 +18,10 @@ light_relais_pin = 11
 
 #api settings
 api_url = "http://192.168.1.21:3000/"
+uuid = "9191235"
+secret = "123"
 settings_endpoint = "settings"
 ph_endpoint = "ph"
 oxygen_endpoint = "oxygen"
 temperature_endpoint = "temperature"
+auth_endpoint = "authentication/gettoken/device"
