@@ -18,36 +18,48 @@ def stopThreads(threads):
         thread.do_run = False
 
 def get_settings(interval):
+    global token
+    headers= {
+        "Authorization": "Bearer " + token
+    }
     global current_settings
     t = threading.currentThread()
     while getattr(t, "do_run", True):
-        req = requests.get(settings.api_url + settings.settings_endpoint)
+        req = requests.get(settings.api_url + settings.settings_endpoint, headers=headers)
         current_settings = json.loads(req.text)
         time.sleep(interval)
     print("stop fetching settings..")
 
 def update_ph(interval):
     #periodically gets the sensor value of PH and sends it to the server
+    global token
     t = threading.currentThread()
     while getattr(t, "do_run", True):
         ph_data = {
             'time': str(time.time()),
             'value': str("fake sensor ph data")
         }
-        postReq = requests.post(settings.api_url + settings.ph_endpoint, data=ph_data)
+        headers= {
+            "Authorization": "Bearer " + token
+        }
+        postReq = requests.post(settings.api_url + settings.ph_endpoint, data=ph_data, headers=headers)
         print("Update PH:\n{}\n\n".format(ph_data))
         time.sleep(interval)
     print("stop updating ph..")
 
 def update_oxygen(interval):
     #periodically gets the sensor value of oxygen and sends it to the server                     
+    global token
     t = threading.currentThread()
     while getattr(t, "do_run", True):
         oxygen_data = {
             'time': str(time.time()),
             'value': str("fake sensor oxygen data")
         }
-        postReq = requests.post(settings.api_url + settings.oxygen_endpoint, data=oxygen_data)
+        headers= {
+            "Authorization": "Bearer " + token
+        }
+        postReq = requests.post(settings.api_url + settings.oxygen_endpoint, data=oxygen_data, headers=headers)
         print("Update Oxygen:\n{}\n\n".format(oxygen_data))
         time.sleep(interval)
     print("stop updating oxygen..")
@@ -55,6 +67,7 @@ def update_oxygen(interval):
 
 def update_temperature(interval):
     #periodically gets the sensor value of temperature and send it to the server                     
+    global token
     sensor = W1ThermSensor()
     t = threading.currentThread()
     while getattr(t, "do_run", True):
@@ -62,7 +75,10 @@ def update_temperature(interval):
             'time': str(time.time()),
             'value': str(sensor.get_temperature())
         }
-        postReq = requests.post(settings.api_url + settings.temperature_endpoint, data=temperature_data)
+        headers= {
+            "Authorization": "Bearer " + token
+        }
+        postReq = requests.post(settings.api_url + settings.temperature_endpoint, data=temperature_data, headers=headers)
         print("Update Temperature:\n{}\n\n".format(temperature_data))
         time.sleep(interval)
     print("stop updating temperature")
@@ -90,12 +106,17 @@ def light_loop(pin):
     print("Stopping Light on pin", pin)
 
 def authenticate():
+    global token
+    headers = {
+        "content-type" : "application/x-www-form-urlencoded"
+    }
     auth_data = {
         "deviceIdentifier": settings.uuid,
         "deviceSecret": settings.secret
     }
-    auth_req = requests.post(settings.api_url + settings.auth_endpoint, data=auth_data)
-    token = json.loads(auth_req.text)
+    auth_req = requests.post(settings.api_url + settings.auth_endpoint, headers=headers, data=auth_data)
+    new_token = json.loads(auth_req.text)
+    token = new_token
     return token
 
 try:
